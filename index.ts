@@ -32,10 +32,12 @@ export const handler: Handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResultV2> => {
   let requestContexts = event.requestContext.authorizer;
-  const user = requestContexts.claims.sub;
-  const useremail = requestContexts.claims.email;
+  // const user = requestContexts.claims.sub;
+  // const useremail = requestContexts.claims.email;
   let bodyEvent = JSON.parse(event.body);
-  const userCode = bodyEvent.userCode;
+  const email =
+    bodyEvent.email ||
+    (requestContexts.claims.email && requestContexts.claims.email);
   const voucher = bodyEvent.voucher;
 
   /**
@@ -53,20 +55,24 @@ export const handler: Handler = async (
   };
 
   // following will
-  const paramsData = {
-    TableName: "redeem-discount-code",
-    AttributesToGet: ["status, code"],
-    Key: {
-      id: useremail,
-    },
-  };
+  // const paramsData = {
+  //   TableName: "redeem-discount-code",
+  //   AttributesToGet: ["status, code"],
+  //   Key: {
+  //     id: email,
+  //   },
+  // };
 
-  const data = await getItem(paramsData);
+  const data = await getItem(params);
+
+  const statusVoucher =
+    data.Items[0].status === "redeemed"
+      ? "The voucher has already been redeemed"
+      : "You have successfully redeemed the voucher";
   let { Item } = data;
   console.log(data);
   let userDataInfo = { ...Item };
-  userDataInfo["useremail"] = useremail;
-  userDataInfo["accesscode"] = user;
+  userDataInfo["statusVoucher"] = statusVoucher;
 
   let res = {};
   res["statusCode"] = 200;
