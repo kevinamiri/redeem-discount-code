@@ -31,7 +31,8 @@ export const handler: Handler = async (
 
   /**
    * 1. Check if the user has already redeemed a discount code ProjectionExpression is used to only return the code attribute
-   * To read data from a table, you use operations such as GetItem, Query, or Scan. Amazon DynamoDB returns all the item attributes by default.
+   * To read data from a table, you use operations such as GetItem, Query, or Scan.
+   *  Amazon DynamoDB returns all the item attributes by default.
    *  To get only some, rather than all of the attributes, use a projection expression.
    */
 
@@ -54,59 +55,60 @@ export const handler: Handler = async (
 
   const data = await getItem(paramsData);
 
-  // function thst chnages the status of the voucher
-  // const params = {
-  //   TableName: "vouchers",
-  //   Key: {
-  //     voucher: voucher,
-  //   },
-  //   UpdateExpression: "set #status = :status",
-  //   ExpressionAttributeNames: {
-  //     "#status": "status",
-  //   },
-  //   ExpressionAttributeValues: {
-  //     ":status": "redeemed",
-  //   },
-  //   ReturnValues: "UPDATED_NEW",
-  // };
-
-  // const data = await docClient.scan(params).promise();
-
-  // const statusVoucher = data.Items[0].status === "redeemable" ? true : false;
-
-  // if statusVoucher true then update the status to redeemed
-  // if (statusVoucher) {
-  //   const paramsUsage = {
-  //     TableName: "redeem-discount-code",
-  //     Key: {
-  //       code: voucher,
-  //     },
-  //     UpdateExpression: "set #status = :status",
-  //     ExpressionAttributeNames: {
-  //       "#status": "status",
-  //     },
-  //     ExpressionAttributeValues: {
-  //       ":status": "redeemed",
-  //     },
-  //     ReturnValues: "UPDATED_NEW",
-  //   };
-
-  //   const data = await docClient.update(paramsUsage).promise();
-  // }
-
   let { Item } = data;
+
+  const redeemStatus = Item && Item.status;
+
   console.log(data);
   let userDataInfo = { ...Item };
   userDataInfo["statusVoucher"] = voucher;
   userDataInfo["email"] = email;
 
-  let res = {};
-  res["statusCode"] = 200;
-  res["headers"] = {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-  };
-  res["body"] = JSON.stringify(userDataInfo);
+  /*
+1. Where the key is voucher and redeemStatus is "redeemable", update the status to "redeemed".
+2. Add a new column as email which is email value of the user.
+*/
 
-  return res;
+  if (redeemStatus === "redeemable") {
+    const params = {
+      TableName: "vouchers",
+      Key: {
+        voucher: voucher,
+      },
+      UpdateExpression: "set #status = :status, #email = :email",
+      ExpressionAttributeNames: {
+        "#status": "status",
+        "#email": "email",
+      },
+      ExpressionAttributeValues: {
+        ":status": "redeemed",
+        ":email": email,
+      },
+      ReturnValues: "UPDATED_NEW",
+    };
+
+    try {
+      const data = await docClient.update(params).promise();
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          message: "Voucher redeemed successfully",
+        }),
+      };
+    } catch (err) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: "Voucher not redeemed",
+        }),
+      };
+    }
+  } else {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        message: "Voucher not redeemable",
+      }),
+    };
+  }
 };
