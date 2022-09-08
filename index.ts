@@ -111,7 +111,7 @@ export const handler: Handler = async (
           "Access-Control-Allow-Origin": "*",
         },
         body: JSON.stringify({
-          message: "Voucher redeemed successfully",
+          message: "The discount code has been redeemed successfully",
           data: userDataInfo,
           updateData,
         }),
@@ -124,7 +124,7 @@ export const handler: Handler = async (
           "Access-Control-Allow-Origin": "*",
         },
         body: JSON.stringify({
-          message: "Voucher not redeemed",
+          message: "Erorr while fetching data, please try again or contact us",
         }),
       };
     }
@@ -136,7 +136,8 @@ export const handler: Handler = async (
         "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify({
-        message: "Voucher not redeemable",
+        message:
+          "The discount coupon cannot be redeemed, this means that the coupon has already been redeemed or has expired.",
       }),
     };
   }
