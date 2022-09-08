@@ -35,16 +35,24 @@ export const handler: Handler = async (
    *  To get only some, rather than all of the attributes, use a projection expression.
    */
 
-  const params = {
-    TableName: "redeemcodes",
-    FilterExpression: "voucher = :voucher",
-    ExpressionAttributeValues: {
-      ":voucher": voucher,
+  // const params = {
+  //   TableName: "redeemcodes",
+  //   FilterExpression: "voucher = :voucher",
+  //   ExpressionAttributeValues: {
+  //     ":voucher": voucher,
+  //   },
+  //   ProjectionExpression: "status, voucher",
+  // };
+
+  const paramsData = {
+    TableName: "users",
+    AttributesToGet: ["characters", "points", "userType"],
+    Key: {
+      voucher: voucher,
     },
-    ProjectionExpression: "status, voucher",
   };
 
-  const data = await getItem(params);
+  const data = await getItem(paramsData);
 
   // const statusVoucher = data.Items[0].status === "redeemable" ? true : false;
 
