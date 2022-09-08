@@ -37,9 +37,9 @@ export const handler: Handler = async (
 
   const params = {
     TableName: "redeemcodes",
-    FilterExpression: "code = :code",
+    FilterExpression: "voucher = :voucher",
     ExpressionAttributeValues: {
-      ":code": voucher,
+      ":voucher": voucher,
     },
     ProjectionExpression: "status, voucher",
   };
