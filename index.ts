@@ -19,15 +19,6 @@ async function getItem(n) {
   }
 }
 
-// async function createItem(n) {
-//   try {
-//     await docClient.put(n).promise();
-//   }
-//   catch (err) {
-//     return err;
-//   }
-// }
-
 export const handler: Handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResultV2> => {
@@ -54,21 +45,30 @@ export const handler: Handler = async (
     ProjectionExpression: "status, code",
   };
 
-  // following will
-  // const paramsData = {
-  //   TableName: "redeem-discount-code",
-  //   AttributesToGet: ["status, code"],
-  //   Key: {
-  //     id: email,
-  //   },
-  // };
-
   const data = await getItem(params);
 
-  const statusVoucher =
-    data.Items[0].status === "redeemed"
-      ? "The voucher has already been redeemed"
-      : "You have successfully redeemed the voucher";
+  const statusVoucher = data.Items[0].status === "redeemable" ? true : false;
+
+  // if statusVoucher true then update the status to redeemed
+  if (statusVoucher) {
+    const paramsUsage = {
+      TableName: "redeem-discount-code",
+      Key: {
+        code: voucher,
+      },
+      UpdateExpression: "set #status = :status",
+      ExpressionAttributeNames: {
+        "#status": "status",
+      },
+      ExpressionAttributeValues: {
+        ":status": "redeemed",
+      },
+      ReturnValues: "UPDATED_NEW",
+    };
+
+    const data = await docClient.update(paramsUsage).promise();
+  }
+
   let { Item } = data;
   console.log(data);
   let userDataInfo = { ...Item };
