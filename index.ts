@@ -61,8 +61,6 @@ export const handler: Handler = async (
 
   console.log(data);
   let userDataInfo = { ...Item };
-  userDataInfo["statusVoucher"] = voucher;
-  userDataInfo["email"] = email;
 
   /*
 1. Where the key is voucher and redeemStatus is "redeemable", update the status to "redeemed".
@@ -87,8 +85,25 @@ export const handler: Handler = async (
       ReturnValues: "UPDATED_NEW",
     };
 
+    // update users table and add a column called permission with value of "premium"
+    const paramsUsers = {
+      TableName: "users",
+      Key: {
+        id: useremail,
+      },
+      UpdateExpression: "set #permission = :permission",
+      ExpressionAttributeNames: {
+        "#permission": "permission",
+      },
+      ExpressionAttributeValues: {
+        ":permission": "premium",
+      },
+      ReturnValues: "UPDATED_NEW",
+    };
+
     try {
       const updateData = await docClient.update(params).promise();
+      await docClient.update(paramsUsers).promise();
       return {
         statusCode: 200,
 
