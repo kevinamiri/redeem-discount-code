@@ -36,43 +36,44 @@ export const handler: Handler = async (
    * To read data from a table, you use operations such as GetItem, Query, or Scan. Amazon DynamoDB returns all the item attributes by default.
    *  To get only some, rather than all of the attributes, use a projection expression.
    */
-  const params = {
-    TableName: "redeem-discount-code",
-    FilterExpression: "code = :code",
-    ExpressionAttributeValues: {
-      ":code": voucher,
-    },
-    ProjectionExpression: "status, code",
-  };
 
-  const data = await getItem(params);
+  // const params = {
+  //   TableName: "redeem-discount-code",
+  //   FilterExpression: "code = :code",
+  //   ExpressionAttributeValues: {
+  //     ":code": voucher,
+  //   },
+  //   ProjectionExpression: "status, code",
+  // };
 
-  const statusVoucher = data.Items[0].status === "redeemable" ? true : false;
+  // const data = await getItem(params);
+
+  // const statusVoucher = data.Items[0].status === "redeemable" ? true : false;
 
   // if statusVoucher true then update the status to redeemed
-  if (statusVoucher) {
-    const paramsUsage = {
-      TableName: "redeem-discount-code",
-      Key: {
-        code: voucher,
-      },
-      UpdateExpression: "set #status = :status",
-      ExpressionAttributeNames: {
-        "#status": "status",
-      },
-      ExpressionAttributeValues: {
-        ":status": "redeemed",
-      },
-      ReturnValues: "UPDATED_NEW",
-    };
+  // if (statusVoucher) {
+  //   const paramsUsage = {
+  //     TableName: "redeem-discount-code",
+  //     Key: {
+  //       code: voucher,
+  //     },
+  //     UpdateExpression: "set #status = :status",
+  //     ExpressionAttributeNames: {
+  //       "#status": "status",
+  //     },
+  //     ExpressionAttributeValues: {
+  //       ":status": "redeemed",
+  //     },
+  //     ReturnValues: "UPDATED_NEW",
+  //   };
 
-    const data = await docClient.update(paramsUsage).promise();
-  }
+  //   const data = await docClient.update(paramsUsage).promise();
+  // }
 
-  let { Item } = data;
-  console.log(data);
-  let userDataInfo = { ...Item };
-  userDataInfo["statusVoucher"] = statusVoucher;
+  // let { Item } = data;
+  // console.log(data);
+  let userDataInfo = {};
+  userDataInfo["statusVoucher"] = voucher;
 
   let res = {};
   res["statusCode"] = 200;
