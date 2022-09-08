@@ -22,11 +22,11 @@ async function getItem(n) {
 export const handler: Handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResultV2> => {
-  // let requestContexts = event.requestContext.authorizer;
-  // const user = requestContexts.claims.sub;
-  // const useremail = requestContexts.claims.email;
+  let requestContexts = event.requestContext.authorizer;
+  const user = requestContexts.claims.sub;
+  const useremail = requestContexts.claims.email;
   let bodyEvent = JSON.parse(event.body);
-  const email = bodyEvent.email;
+  const email = useremail;
   const voucher = bodyEvent.voucher;
 
   /**
@@ -53,6 +53,24 @@ export const handler: Handler = async (
   };
 
   const data = await getItem(paramsData);
+
+  // function thst chnages the status of the voucher
+  // const params = {
+  //   TableName: "vouchers",
+  //   Key: {
+  //     voucher: voucher,
+  //   },
+  //   UpdateExpression: "set #status = :status",
+  //   ExpressionAttributeNames: {
+  //     "#status": "status",
+  //   },
+  //   ExpressionAttributeValues: {
+  //     ":status": "redeemed",
+  //   },
+  //   ReturnValues: "UPDATED_NEW",
+  // };
+
+  // const data = await docClient.scan(params).promise();
 
   // const statusVoucher = data.Items[0].status === "redeemable" ? true : false;
 
