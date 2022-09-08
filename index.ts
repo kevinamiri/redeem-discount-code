@@ -98,6 +98,7 @@ export const handler: Handler = async (
   console.log(data);
   let userDataInfo = { ...Item };
   userDataInfo["statusVoucher"] = voucher;
+  userDataInfo["email"] = email;
 
   let res = {};
   res["statusCode"] = 200;
