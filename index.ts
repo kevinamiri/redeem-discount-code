@@ -106,7 +106,6 @@ export const handler: Handler = async (
       await docClient.update(paramsUsers).promise();
       return {
         statusCode: 200,
-
         body: JSON.stringify({
           message: "Voucher redeemed successfully",
           data: userDataInfo,
@@ -115,7 +114,7 @@ export const handler: Handler = async (
       };
     } catch (err) {
       return {
-        statusCode: 500,
+        statusCode: 200,
         body: JSON.stringify({
           message: "Voucher not redeemed",
         }),
@@ -123,7 +122,7 @@ export const handler: Handler = async (
     }
   } else {
     return {
-      statusCode: 400,
+      statusCode: 200,
       body: JSON.stringify({
         message: "Voucher not redeemable",
       }),
