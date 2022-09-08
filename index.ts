@@ -45,8 +45,8 @@ export const handler: Handler = async (
   // };
 
   const paramsData = {
-    TableName: "users",
-    AttributesToGet: ["characters", "points", "userType"],
+    TableName: "vouchers",
+    AttributesToGet: ["voucher", "status"],
     Key: {
       voucher: voucher,
     },
