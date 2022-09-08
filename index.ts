@@ -27,8 +27,8 @@ export const handler: Handler = async (
   // const useremail = requestContexts.claims.email;
   let bodyEvent = JSON.parse(event.body);
   const email =
-    bodyEvent.email ||
-    (requestContexts.claims.email && requestContexts.claims.email);
+    (requestContexts.claims.email && requestContexts.claims.email) ||
+    bodyEvent.email;
   const voucher = bodyEvent.voucher;
 
   /**
@@ -37,16 +37,16 @@ export const handler: Handler = async (
    *  To get only some, rather than all of the attributes, use a projection expression.
    */
 
-  // const params = {
-  //   TableName: "redeem-discount-code",
-  //   FilterExpression: "code = :code",
-  //   ExpressionAttributeValues: {
-  //     ":code": voucher,
-  //   },
-  //   ProjectionExpression: "status, code",
-  // };
+  const params = {
+    TableName: "redeemcodes",
+    FilterExpression: "code = :code",
+    ExpressionAttributeValues: {
+      ":code": voucher,
+    },
+    ProjectionExpression: "status, voucher",
+  };
 
-  // const data = await getItem(params);
+  const data = await getItem(params);
 
   // const statusVoucher = data.Items[0].status === "redeemable" ? true : false;
 
@@ -70,9 +70,9 @@ export const handler: Handler = async (
   //   const data = await docClient.update(paramsUsage).promise();
   // }
 
-  // let { Item } = data;
-  // console.log(data);
-  let userDataInfo = {};
+  let { Item } = data;
+  console.log(data);
+  let userDataInfo = { ...Item };
   userDataInfo["statusVoucher"] = voucher;
 
   let res = {};
