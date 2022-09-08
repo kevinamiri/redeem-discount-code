@@ -88,11 +88,14 @@ export const handler: Handler = async (
     };
 
     try {
-      const data = await docClient.update(params).promise();
+      const updateData = await docClient.update(params).promise();
       return {
         statusCode: 200,
+
         body: JSON.stringify({
           message: "Voucher redeemed successfully",
+          data: userDataInfo,
+          updateData,
         }),
       };
     } catch (err) {
