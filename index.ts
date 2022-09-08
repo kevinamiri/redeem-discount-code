@@ -106,6 +106,10 @@ export const handler: Handler = async (
       await docClient.update(paramsUsers).promise();
       return {
         statusCode: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
         body: JSON.stringify({
           message: "Voucher redeemed successfully",
           data: userDataInfo,
@@ -115,6 +119,10 @@ export const handler: Handler = async (
     } catch (err) {
       return {
         statusCode: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
         body: JSON.stringify({
           message: "Voucher not redeemed",
         }),
@@ -123,6 +131,10 @@ export const handler: Handler = async (
   } else {
     return {
       statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
       body: JSON.stringify({
         message: "Voucher not redeemable",
       }),
