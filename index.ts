@@ -22,13 +22,11 @@ async function getItem(n) {
 export const handler: Handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResultV2> => {
-  let requestContexts = event.requestContext.authorizer;
+  // let requestContexts = event.requestContext.authorizer;
   // const user = requestContexts.claims.sub;
   // const useremail = requestContexts.claims.email;
   let bodyEvent = JSON.parse(event.body);
-  const email =
-    (requestContexts.claims.email && requestContexts.claims.email) ||
-    bodyEvent.email;
+  const email = bodyEvent.email;
   const voucher = bodyEvent.voucher;
 
   /**
