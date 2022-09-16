@@ -35,15 +35,27 @@ export const handler: Handler = async (
   let bodyEvent = JSON.parse(event.body);
   const email = useremail;
   const voucher = bodyEvent.voucher;
+  const DateNumNow = Date.now();
+  const hoursNumber = Number(DateNumNow) / 3600000;
+  const minutesNumber = Number(DateNumNow) / 60000;
+  const hoursNumFixed = hoursNumber.toFixed(0);
+  const minutesNumFixed = minutesNumber.toFixed(0);
 
   //1- create tables if user did not existed
   const paramsStart = {
     TableName: "users",
     Item: {
       id: useremail,
+      userType: 1,
       characters: 0,
       points: 0,
       runs: 0,
+      generationDate: DateNumNow,
+      hoursNumber: hoursNumFixed,
+      minuteNumber: minutesNumFixed,
+      runsInHours: 0,
+      runsInMinutes: 0,
+      permission: "free",
     },
     ConditionExpression: "attribute_not_exists(id)",
   };
