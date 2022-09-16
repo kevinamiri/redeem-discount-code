@@ -18,6 +18,13 @@ async function getItem(n) {
     return err;
   }
 }
+export const createItem = async function (n) {
+  try {
+    await docClient.put(n).promise();
+  } catch (err) {
+    return err;
+  }
+};
 
 export const handler: Handler = async (
   event: APIGatewayProxyEvent
@@ -28,6 +35,21 @@ export const handler: Handler = async (
   let bodyEvent = JSON.parse(event.body);
   const email = useremail;
   const voucher = bodyEvent.voucher;
+
+  //1- create tables if user did not existed
+  const paramsStart = {
+    TableName: "users",
+    Item: {
+      id: useremail,
+      characters: 0,
+      points: 0,
+      runs: 0,
+    },
+    ConditionExpression: "attribute_not_exists(id)",
+  };
+
+  //apply 1
+  await createItem(paramsStart);
 
   /**
    * 1. Check if the user has already redeemed a discount code ProjectionExpression is used to only return the code attribute
@@ -85,18 +107,20 @@ export const handler: Handler = async (
       ReturnValues: "UPDATED_NEW",
     };
 
-    // update users table and add a column called permission with value of "premium"
+    // update users table and add a column called permission with value of "premium" and userType with value of 3
     const paramsUsers = {
       TableName: "users",
       Key: {
         id: useremail,
       },
-      UpdateExpression: "set #permission = :permission",
+      UpdateExpression: "set #permission = :permission, #userType = :userType",
       ExpressionAttributeNames: {
         "#permission": "permission",
+        "#userType": "userType",
       },
       ExpressionAttributeValues: {
         ":permission": "premium",
+        ":userType": 3,
       },
       ReturnValues: "UPDATED_NEW",
     };
