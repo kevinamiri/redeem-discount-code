@@ -48,6 +48,7 @@ export const handler: Handler = async (
       id: useremail,
       userType: 1,
       characters: 0,
+      tokenUsage: 0,
       points: 0,
       runs: 0,
       generationDate: DateNumNow,
