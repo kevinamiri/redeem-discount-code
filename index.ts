@@ -45,7 +45,7 @@ export const handler: Handler = async (
 
   //1- create tables if user did not existed
   const paramsStart = {
-    TableName: "users-a",
+    TableName: "users",
     Item: {
       id: useremail,
       userType: 1,
@@ -126,7 +126,7 @@ export const handler: Handler = async (
 
     // update users table and add a column called permission with value of "premium" and userType with value of 3
     const paramsUsers = {
-      TableName: "users-a",
+      TableName: "users",
       Key: {
         id: useremail,
       },
