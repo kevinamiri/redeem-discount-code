@@ -36,26 +36,30 @@ export const handler: Handler = async (
   const email = useremail;
   const voucher = bodyEvent.voucher;
   const DateNumNow = Date.now();
-  const hoursNumber = Number(DateNumNow) / 3600000;
-  const minutesNumber = Number(DateNumNow) / 60000;
+  const hoursNumber = Number(DateNumNow) / 3600000; // 1 hour = 3600000 milliseconds >> which is the record of the last 1 hour
+  const minutesNumber = Number(DateNumNow) / 60000; // 1 minute = 60000 milliseconds
+  const monthsNumber = Number(DateNumNow) / 2629746000; // 2629746000 is the number of milliseconds in a month; This will record the last month number
   const hoursNumFixed = hoursNumber.toFixed(0);
   const minutesNumFixed = minutesNumber.toFixed(0);
+  const monthsNumFixed = monthsNumber.toFixed(0);
 
   //1- create tables if user did not existed
   const paramsStart = {
-    TableName: "users",
+    TableName: "users-a",
     Item: {
       id: useremail,
       userType: 1,
+      generationDate: DateNumNow,
+      hoursNumber: hoursNumFixed,
+      minuteNumber: minutesNumFixed,
+      monthsNumber: monthsNumFixed,
       characters: 0,
       tokenUsage: 0,
       points: 0,
       runs: 0,
-      generationDate: DateNumNow,
-      hoursNumber: hoursNumFixed,
-      minuteNumber: minutesNumFixed,
       runsInHours: 0,
       runsInMinutes: 0,
+      charsInMonths: 0,
       permission: "free",
     },
     ConditionExpression: "attribute_not_exists(id)",
@@ -122,7 +126,7 @@ export const handler: Handler = async (
 
     // update users table and add a column called permission with value of "premium" and userType with value of 3
     const paramsUsers = {
-      TableName: "users",
+      TableName: "users-a",
       Key: {
         id: useremail,
       },
